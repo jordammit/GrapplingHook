@@ -1,0 +1,20 @@
+Settings:
+  #If you would like to give the players the hook on join, set this to true.
+  #If set to true, you need to restart the server, because the event is not registered unless set to true.
+  #If they already have the item nothing will happen
+  give_on_join: false
+
+  #Set the velocity aka the amount of leap players get when using the grappling hook.
+  velocity: 1.0
+  #Set the cooldown in seconds between each use.
+  cooldown: 2
+
+  #set Enabled to true or false to toggle sounds
+  sound:
+    enabled: true
+    #sound names https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+    name: BLOCK_NOTE_BLOCK_PLING
+
+  stats:
+    #Adds some basic use stats to the item lore. (Bound to the item)
+    enabled: false

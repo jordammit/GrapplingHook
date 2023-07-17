@@ -1,0 +1,7 @@
+name: GrapplingHook
+version: '${project.version}'
+main: me.albus.grapplinghook.GrapplingHook
+api-version: 1.16
+commands:
+  grapplinghook:
+    aliases: [gh, hook]
