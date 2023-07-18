@@ -1,6 +1,7 @@
 package me.albus.grapplinghook;
 
 import me.albus.grapplinghook.Commands.CommandManager;
+import me.albus.grapplinghook.Listener.CraftEvent;
 import me.albus.grapplinghook.Listener.FishEvent;
 import me.albus.grapplinghook.Listener.JoinEvent;
 import me.albus.grapplinghook.Utils.Config;
@@ -53,6 +54,7 @@ public final class GrapplingHook extends JavaPlugin {
 
         if(config.get().getBoolean("Settings.crafting.enabled")) {
             loadRecipe();
+            getServer().getPluginManager().registerEvents(new CraftEvent(), this);
         }
 
         new Metrics(this, 18564);
