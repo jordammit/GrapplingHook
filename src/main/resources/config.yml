@@ -4,6 +4,12 @@ Settings:
   #If they already have the item nothing will happen
   give_on_join: false
 
+  #Allow players to craft the grappling hook. It's the same as a fishing rod but the string is
+  #replaced by emeralds. aka 'X S' ' XS' '  X'
+  crafting:
+    #Needs server restart to take effect.
+    enabled: false
+
   #Set the velocity aka the amount of leap players get when using the grappling hook.
   velocity: 1.0
   #Set the cooldown in seconds between each use.

@@ -7,9 +7,12 @@ import me.albus.grapplinghook.Utils.Config;
 import me.albus.grapplinghook.Utils.CooldownManager;
 import me.albus.grapplinghook.Utils.Notify;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,6 +51,10 @@ public final class GrapplingHook extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new JoinEvent(), this);
         }
 
+        if(config.get().getBoolean("Settings.crafting.enabled")) {
+            loadRecipe();
+        }
+
         new Metrics(this, 18564);
     }
 
@@ -69,7 +76,7 @@ public final class GrapplingHook extends JavaPlugin {
     }
 
     public ItemStack getHook() {
-        ItemStack item = new ItemStack(Material.FISHING_ROD);
+        ItemStack item = new ItemStack(Material.FISHING_ROD, 1);
         ItemMeta meta = item.getItemMeta();
         NamespacedKey key = new NamespacedKey(GrapplingHook.getInstance(), "hook");
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "hook");
@@ -77,5 +84,19 @@ public final class GrapplingHook extends JavaPlugin {
         meta.setDisplayName(notify.message("plugin_prefix"));
         item.setItemMeta(meta);
         return item;
+    }
+
+    public Recipe getRecipe() {
+        ItemStack item = getHook();
+
+        ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(this, "gh"), item);
+        recipe.shape("S  ", "DS ", "D S");
+        recipe.setIngredient('S', Material.STICK);
+        recipe.setIngredient('D', Material.EMERALD);
+        return recipe;
+    }
+
+    public void loadRecipe() {
+        Bukkit.addRecipe(getRecipe());
     }
 }
