@@ -21,6 +21,21 @@ Settings:
     #sound names https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
     name: BLOCK_NOTE_BLOCK_PLING
 
+  #Hook messages
+  messages:
+    actionbar:
+      enabled: true
+      #Action bar do not support hex colors, so please limit the colors here to bukkit colors.
+      message: '&8&l&oWhoosh!'
+    title:
+      enabled: true
+      message: "&#EBC7FFWhoosh!"
+    cooldown:
+      enabled: true
+      title: "&#EBC7FFCan't use this yet!"
+      #Do not remove or change the '%this%'.
+      subtitle: "&#EBC7FFCooldown: &#BE8CFF%this%&#EBC7FF seconds."
+
   stats:
     #Adds some basic use stats to the item lore. (Bound to the item)
     enabled: false

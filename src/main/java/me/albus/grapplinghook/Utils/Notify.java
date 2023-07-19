@@ -57,18 +57,14 @@ public class Notify {
 
     public void initialize() {
         get().addDefault("plugin_prefix", "&#EBC7FF[&#BE8CFFGrappling Hook&#EBC7FF]");
-        get().addDefault("ab_message", "&#EBC7FFWhoosh!");
         get().addDefault("permission", "&#EBC7FFYou do not have permission.");
         get().addDefault("syntax", "&#EBC7FFWrong syntax: &#BE8CFF%this%");
         get().addDefault("plugin_reloaded", "&#EBC7FFConfig and messages has been reloaded.");
         get().addDefault("set", "&#EBC7FFYou set &#BE8CFF%this%&a to &#EBC7FF%that%&#EBC7FF.");
         get().addDefault("missing_player", "&#EBC7FFCan't find &#BE8CFF%this%&#EBC7FF online.");
         get().addDefault("full_inventory", "&#BE8CFF%this%&#EBC7FF inventory is full");
-        get().addDefault("cooldown_title", "&#EBC7FFCan't use this yet!");
-        get().addDefault("cooldown_subtitle", "&#EBC7FFCooldown: &#BE8CFF%this%&#EBC7FF seconds.");
         get().addDefault("cooldown_less", "less than 1 second");
 
-        //"&7&lGrappling Hook Used: &e&l" + uses + " times."
         get().addDefault("stats_uses", "&#EBC7FFThe Grappling Hook Has Been Used: &#BE8CFF%this% times.");
 
         get().addDefault("received", "&#BE8CFF%this%&#EBC7FF gave you a %plugin%");

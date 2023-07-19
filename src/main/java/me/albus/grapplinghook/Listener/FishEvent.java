@@ -3,6 +3,8 @@ package me.albus.grapplinghook.Listener;
 import me.albus.grapplinghook.GrapplingHook;
 import me.albus.grapplinghook.Utils.CooldownManager;
 import me.albus.grapplinghook.Utils.Notify;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
@@ -10,9 +12,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.inventory.CraftingInventory;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -57,13 +58,15 @@ public class FishEvent implements Listener {
 
         if(cooldownManager.hasCooldown(player)) {
             long timeleft = cooldownManager.getRemainingTime(player);
-            String title = notify.message("cooldown_title");
-            if(timeleft > 0) {
-                String subtitle = notify.message("cooldown_subtitle").replace("%this%", String.valueOf(timeleft));
-                player.sendTitle(title,  subtitle, 15, 50, 15);
-            } else {
-                String subtitle = notify.message("cooldown_subtitle").replace("%this%", notify.message("cooldown_less"));
-                player.sendTitle(title, subtitle, 15, 50, 15);
+            if(config.getBoolean("Settings.messages.cooldown.enabled")) {
+                String title = config.getString("Settings.messages.cooldown.title");
+                String subtitle;
+                if(timeleft > 0) {
+                    subtitle = config.getString("Settings.messages.cooldown.subtitle").replace("%this%", String.valueOf(timeleft));
+                } else {
+                    subtitle = config.getString("Settings.messages.cooldown.subtitle").replace("%this%", notify.message("cooldown_less"));
+                }
+                player.sendTitle(notify.color(title), notify.color(subtitle), 15, 50, 15);
             }
             event.setCancelled(true);
             return;
@@ -99,10 +102,18 @@ public class FishEvent implements Listener {
                 item.setItemMeta(meta);
             }
 
-            if(config.getBoolean("Settings.sound.enabled")) {
+            if (config.getBoolean("Settings.sound.enabled")) {
                 player.playSound(player.getLocation(), Sound.valueOf(config.getString("Settings.sound.name")), 1, 1);
             }
-            player.sendTitle("", notify.message("ab_message"), 15, 50, 15);
+
+            if (config.getBoolean("Settings.messages.title.enabled")) {
+                player.sendTitle("", notify.color(config.getString("Settings.messages.title.message")), 15, 50, 15);
+            }
+
+            if (config.getBoolean("Settings.messages.actionbar.enabled")) {
+                String actionbar = config.getString("Settings.messages.actionbar.message");
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(notify.color(actionbar)));
+            }
         }
     }
 
