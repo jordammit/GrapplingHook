@@ -4,8 +4,12 @@ import me.albus.grapplinghook.Commands.SubCommand;
 import me.albus.grapplinghook.GrapplingHook;
 import me.albus.grapplinghook.Utils.Notify;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
@@ -22,7 +26,7 @@ public class give extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "/grapplinghook give <player>";
+        return "/grapplinghook give <player> <optional uses>";
     }
 
     @Override

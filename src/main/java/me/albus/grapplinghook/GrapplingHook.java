@@ -15,8 +15,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
 
 
 public final class GrapplingHook extends JavaPlugin {
@@ -80,12 +83,43 @@ public final class GrapplingHook extends JavaPlugin {
     public ItemStack getHook() {
         ItemStack item = new ItemStack(Material.FISHING_ROD, 1);
         ItemMeta meta = item.getItemMeta();
-        NamespacedKey key = new NamespacedKey(GrapplingHook.getInstance(), "hook");
+        NamespacedKey key = new NamespacedKey(getInstance(), "hook");
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "hook");
 
+        if(config().get().getBoolean("Settings.uses.enabled")) {
+            int uses = config().get().getInt("Settings.uses.amount");
+            NamespacedKey counter = new NamespacedKey(GrapplingHook.getInstance(), "uses");
+            meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
+            ArrayList<String> lore = new ArrayList<>();
+            lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
+            meta.setLore(lore);
+        }
         meta.setDisplayName(notify.message("plugin_prefix"));
         item.setItemMeta(meta);
         return item;
+    }
+
+    public boolean isInteger(String input) {
+        if (input == null || input.isEmpty()) {
+            return false;
+        }
+
+        int startIndex = 0;
+        if (input.charAt(0) == '-' || input.charAt(0) == '+') {
+            if (input.length() == 1) {
+                return false; // Single '+' or '-' is not a valid integer
+            }
+            startIndex = 1;
+        }
+
+        for (int i = startIndex; i < input.length(); i++) {
+            char ch = input.charAt(i);
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public Recipe getRecipe() {

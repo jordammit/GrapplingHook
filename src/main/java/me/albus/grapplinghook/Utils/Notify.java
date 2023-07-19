@@ -65,10 +65,12 @@ public class Notify {
         get().addDefault("full_inventory", "&#BE8CFF%this%&#EBC7FF inventory is full");
         get().addDefault("cooldown_less", "less than 1 second");
 
-        get().addDefault("stats_uses", "&#EBC7FFThe Grappling Hook Has Been Used: &#BE8CFF%this% times.");
+        get().addDefault("stats_uses", "&#EBC7FF&l&oUses: &#BE8CFF&o&l%this%&#EBC7FF&l&o left.");
 
         get().addDefault("received", "&#BE8CFF%this%&#EBC7FF gave you a %plugin%");
         get().addDefault("gave", "&#EBC7FFYou gave &#BE8CFF%this%&#EBC7FF a %plugin%");
+
+        get().addDefault("break", "&#EBC7FFYour &#EBC7FF[&#BE8CFFGrappling Hook&#EBC7FF] &#EBC7FFhas been broken");
     }
 
     public FileConfiguration get() {

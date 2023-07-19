@@ -29,11 +29,13 @@ public class FishEvent implements Listener {
     public void onFish(PlayerFishEvent event) {
         Player player = event.getPlayer();
 
-        Notify notify = GrapplingHook.getInstance().getNotify();
-        
-        config = GrapplingHook.getInstance().config().get();
+        GrapplingHook grapplingHook = GrapplingHook.getInstance();
 
-        CooldownManager cooldownManager = GrapplingHook.getInstance().getCooldownManager();
+        Notify notify = grapplingHook.getNotify();
+        
+        config = grapplingHook.config().get();
+
+        CooldownManager cooldownManager = grapplingHook.getCooldownManager();
 
         if (!player.hasPermission("gh.player") && !player.hasPermission("gh.admin") && !player.isOp()) {
             player.sendMessage(notify.chatMessage("permission"));
@@ -45,7 +47,7 @@ public class FishEvent implements Listener {
         ItemMeta meta = item.getItemMeta();
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(GrapplingHook.getInstance(), "hook");
+        NamespacedKey key = new NamespacedKey(grapplingHook, "hook");
         String value = container.get(key, PersistentDataType.STRING);
 
         if(value == null) {
@@ -84,23 +86,31 @@ public class FishEvent implements Listener {
                 cooldownManager.startCooldown(player);
             }
 
-            if (config.getBoolean("Settings.stats.enabled")) {
-                NamespacedKey stats_key = new NamespacedKey(GrapplingHook.getInstance(), "hook_stats");
-                int uses;
+            if (config.getBoolean("Settings.uses.enabled")) {
+                PersistentDataContainer uses = meta.getPersistentDataContainer();
+                NamespacedKey useKey = new NamespacedKey(grapplingHook, "uses");
 
-                if (container.has(stats_key, PersistentDataType.INTEGER)) {
-                    uses = container.get(stats_key, PersistentDataType.INTEGER);
-                    uses = uses + 1;
-                } else {
-                    uses = 1;
+                if (uses.has(useKey, PersistentDataType.INTEGER)) {
+                    int used = uses.getOrDefault(useKey, PersistentDataType.INTEGER, 40);
+
+                    if (used > 1) {
+                        uses.set(useKey, PersistentDataType.INTEGER, used - 1);
+                        ArrayList<String> lore = new ArrayList<>();
+                        lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(used - 1)));
+                        meta.setLore(lore);
+                        item.setItemMeta(meta);
+                    } else {
+                        player.getInventory().removeItem(item);
+                        if(config.getBoolean("Settings.uses.sound.enabled")) {
+                            player.playSound(player.getLocation(), Sound.valueOf(config.getString("Settings.uses.sound.name")), 1, 1);
+                        }
+                        if(config.getBoolean("Settings.uses.message.enabled")) {
+                            player.sendMessage(notify.chatMessage("break"));
+                        }
+                    }
                 }
-
-                container.set(stats_key, PersistentDataType.INTEGER, uses);
-                ArrayList<String> lore = new ArrayList<>();
-                lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
-                meta.setLore(lore);
-                item.setItemMeta(meta);
             }
+
 
             if (config.getBoolean("Settings.sound.enabled")) {
                 player.playSound(player.getLocation(), Sound.valueOf(config.getString("Settings.sound.name")), 1, 1);

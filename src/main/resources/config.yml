@@ -36,6 +36,15 @@ Settings:
       #Do not remove or change the '%this%'.
       subtitle: "&#EBC7FFCooldown: &#BE8CFF%this%&#EBC7FF seconds."
 
-  stats:
+  #Default uses on /gh give <player>
+  uses:
     #Adds some basic use stats to the item lore. (Bound to the item)
-    enabled: false
+    enabled: true
+    #The default amount given if not specified.
+    amount: 60
+
+    sound:
+      enabled: true
+      name: ENTITY_GOAT_HORN_BREAK
+    message:
+      enabled: true
