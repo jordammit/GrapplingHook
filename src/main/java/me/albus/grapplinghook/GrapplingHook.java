@@ -107,7 +107,7 @@ public final class GrapplingHook extends JavaPlugin {
         int startIndex = 0;
         if (input.charAt(0) == '-' || input.charAt(0) == '+') {
             if (input.length() == 1) {
-                return false; // Single '+' or '-' is not a valid integer
+                return false;
             }
             startIndex = 1;
         }

@@ -26,7 +26,7 @@ Settings:
     actionbar:
       enabled: true
       #Action bar do not support hex colors, so please limit the colors here to bukkit colors.
-      message: '&8&l&oWhoosh!'
+      message: '&d&l&oWhoosh!'
     title:
       enabled: true
       message: "&#EBC7FFWhoosh!"
