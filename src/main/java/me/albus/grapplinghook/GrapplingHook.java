@@ -85,15 +85,6 @@ public final class GrapplingHook extends JavaPlugin {
         ItemMeta meta = item.getItemMeta();
         NamespacedKey key = new NamespacedKey(getInstance(), "hook");
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "hook");
-
-        if(config().get().getBoolean("Settings.uses.enabled")) {
-            int uses = config().get().getInt("Settings.uses.amount");
-            NamespacedKey counter = new NamespacedKey(GrapplingHook.getInstance(), "uses");
-            meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
-            ArrayList<String> lore = new ArrayList<>();
-            lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
-            meta.setLore(lore);
-        }
         meta.setDisplayName(notify.message("plugin_prefix"));
         item.setItemMeta(meta);
         return item;

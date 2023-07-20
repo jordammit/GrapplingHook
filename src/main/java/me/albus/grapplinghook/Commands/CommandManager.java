@@ -4,14 +4,19 @@ import me.albus.grapplinghook.Commands.list.give;
 import me.albus.grapplinghook.Commands.list.reload;
 import me.albus.grapplinghook.Commands.list.set;
 import me.albus.grapplinghook.GrapplingHook;
+import me.albus.grapplinghook.Utils.Config;
 import me.albus.grapplinghook.Utils.Notify;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +31,9 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Notify notify = GrapplingHook.getInstance().getNotify();
+        GrapplingHook grapplingHook = GrapplingHook.getInstance();
+        Notify notify = grapplingHook.getNotify();
+        Config config = grapplingHook.config();
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (args.length > 0) {
@@ -54,27 +61,52 @@ public class CommandManager implements TabExecutor {
         if(sender instanceof ConsoleCommandSender) {
             if(args.length > 0) {
                 if(args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                    GrapplingHook.getInstance().config().reload();
+                    config.reload();
                     notify.reload();
                     sender.sendMessage("[GrapplingHook] Config and messages has been reloaded.");
-                } else if(args.length == 2 && args[0].equalsIgnoreCase("give")) {
+                } else if(args.length > 1 && args[0].equalsIgnoreCase("give")) {
                     Player target = Bukkit.getPlayer(args[1]);
-                    if(target == null && !target.isOnline()) {
-                        sender.sendMessage("[GrapplingHook] That player is not online.");
-                        return true;
+                    if(target == null) {
+                        sender.sendMessage("[GrapplingHook] Cannot find " + args[1] + " online.");
+                        return false;
+                    }
+
+                    ItemStack item = grapplingHook.getHook();
+                    ItemMeta meta = item.getItemMeta();
+                    int uses;
+
+                    if(args.length == 2) {
+                        uses = config.get().getInt("Settings.uses.amount");
+                    } else if(args.length == 3) {
+                        if(grapplingHook.isInteger(args[2])) {
+                            uses = Integer.valueOf(args[2]);
+                        } else {
+                            sender.sendMessage("[GrapplingHook] Wrong Syntax: /grapplinghook give <player> <optional uses>");
+                            return false;
+                        }
+                    } else {
+                        sender.sendMessage("[GrapplingHook] Wrong Syntax: /grapplinghook give <player> <optional uses>");
+                        return false;
+                    }
+
+                    if(uses > 0 && config.get().getBoolean("Settings.uses.enabled")) {
+                        NamespacedKey counter = new NamespacedKey(GrapplingHook.getInstance(), "uses");
+                        meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
+                        ArrayList<String> lore = new ArrayList<>();
+                        lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
+                        meta.setLore(lore);
+                        item.setItemMeta(meta);
                     }
 
                     boolean isInventoryFull = target.getInventory().firstEmpty() == -1;
                     if(isInventoryFull) {
-                        sender.sendMessage("[GrapplingHook] " + target.getName() + "'s inventory is full.");
-                        return true;
+                        sender.sendMessage(notify.chatMessage("[GrapplingHook] " + target.getName() + " has a full inventory."));
+                        return false;
                     }
-
-                    ItemStack item = GrapplingHook.getInstance().getHook();
 
                     target.getInventory().addItem(item);
                     target.sendMessage(notify.chatMessage("received").replace("%this%", "Console").replace("%plugin%", notify.message("plugin_prefix")));
-                    sender.sendMessage("[GrapplingHook] you gave " + target.getName() + " a grappling hook.");
+                    sender.sendMessage("[GrapplingHook] Console gave " + target.getName() + " the GrapplingHook");
                     return true;
                 }
             } else {
