@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class give extends SubCommand {
     @Override
@@ -66,6 +67,8 @@ public class give extends SubCommand {
         } else if(args.length == 3) {
             if(grapplingHook.isInteger(args[2])) {
                 uses = Integer.valueOf(args[2]);
+            } else if(args[2].equalsIgnoreCase("random")) {
+                uses = grapplingHook.getRandom();
             } else {
                 player.sendMessage(notify.chatMessage("syntax").replace("%this%", getSyntax()));
                 return;

@@ -20,6 +20,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public final class GrapplingHook extends JavaPlugin {
@@ -121,6 +122,22 @@ public final class GrapplingHook extends JavaPlugin {
         recipe.setIngredient('S', Material.STICK);
         recipe.setIngredient('D', Material.EMERALD);
         return recipe;
+    }
+
+    public int getRandom() {
+        Random random = new Random();
+
+        int min = config().get().getInt("Settings.uses.random.min");
+        int max = config().get().getInt("Settings.uses.random.max");
+        if (min < 1) {
+            min = 1;
+        }
+
+        if (max < 1) {
+            max = 99;
+        }
+
+        return random.nextInt(max - min + 1) + min;
     }
 
     public void loadRecipe() {

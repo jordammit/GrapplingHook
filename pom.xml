@@ -6,7 +6,7 @@
 
     <groupId>me.albus</groupId>
     <artifactId>GrapplingHook</artifactId>
-    <version>3.1</version>
+    <version>3.2</version>
     <packaging>jar</packaging>
 
     <name>GrapplingHook</name>

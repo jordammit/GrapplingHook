@@ -80,6 +80,8 @@ public class CommandManager implements TabExecutor {
                     } else if(args.length == 3) {
                         if(grapplingHook.isInteger(args[2])) {
                             uses = Integer.valueOf(args[2]);
+                        } else if(args[2].equalsIgnoreCase("random")) {
+                            uses = grapplingHook.getRandom();
                         } else {
                             sender.sendMessage("[GrapplingHook] Wrong Syntax: /grapplinghook give <player> <optional uses>");
                             return false;
