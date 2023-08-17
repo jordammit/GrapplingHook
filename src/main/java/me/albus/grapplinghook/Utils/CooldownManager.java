@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CooldownManager {
-    private Map<Player, Long> cooldowns = new HashMap<>();
-    private long cooldownDuration;
+    private final Map<Player, Long> cooldowns = new HashMap<>();
 
     public void startCooldown(Player player) {
-        this.cooldownDuration = GrapplingHook.getInstance().config().get().getLong("Settings.cooldown");
+        long cooldownDuration = GrapplingHook.getInstance().config().get().getLong("Settings.cooldown");
         long currentTime = System.currentTimeMillis();
         long cooldownExpiration = currentTime + (cooldownDuration * 1000); // Convert seconds to milliseconds
         cooldowns.put(player, cooldownExpiration);

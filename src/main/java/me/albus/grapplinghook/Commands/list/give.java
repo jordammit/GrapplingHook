@@ -14,7 +14,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class give extends SubCommand {
     @Override
@@ -64,27 +63,26 @@ public class give extends SubCommand {
 
         if(args.length == 2) {
             uses = config.getInt("Settings.uses.amount");
-        } else if(args.length == 3) {
+        } else {
             if(grapplingHook.isInteger(args[2])) {
-                uses = Integer.valueOf(args[2]);
+                uses = Integer.parseInt(args[2]);
             } else if(args[2].equalsIgnoreCase("random")) {
                 uses = grapplingHook.getRandom();
             } else {
                 player.sendMessage(notify.chatMessage("syntax").replace("%this%", getSyntax()));
                 return;
             }
-        } else {
-            player.sendMessage(notify.chatMessage("syntax").replace("%this%", getSyntax()));
-            return;
         }
 
         if(uses > 0 && config.getBoolean("Settings.uses.enabled")) {
             NamespacedKey counter = new NamespacedKey(GrapplingHook.getInstance(), "uses");
-            meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
-            ArrayList<String> lore = new ArrayList<>();
-            lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
-            meta.setLore(lore);
-            item.setItemMeta(meta);
+            if(meta != null) {
+                meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
+                ArrayList<String> lore = new ArrayList<>();
+                lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+            }
         }
 
         boolean isInventoryFull = target.getInventory().firstEmpty() == -1;

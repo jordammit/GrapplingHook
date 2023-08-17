@@ -4,12 +4,6 @@ Settings:
   #If they already have the item nothing will happen
   give_on_join: false
 
-  #Allow players to craft the grappling hook. It's the same as a fishing rod but the string is
-  #replaced by emeralds. aka 'X S' ' XS' '  X'
-  crafting:
-    #Needs server restart to take effect.
-    enabled: false
-
   #Set the velocity aka the amount of leap players get when using the grappling hook.
   velocity: 1.0
   #Set the cooldown in seconds between each use.
@@ -36,6 +30,7 @@ Settings:
       #Do not remove or change the '%this%'.
       subtitle: "&#EBC7FFCooldown: &#BE8CFF%this%&#EBC7FF seconds."
 
+
   #Default uses on /gh give <player>
   uses:
     #Adds some basic use stats to the item lore. (Bound to the item)
@@ -54,3 +49,10 @@ Settings:
       name: ENTITY_GOAT_HORN_BREAK
     message:
       enabled: true
+
+  #Allow players to craft the grappling hook. It's the same as a fishing rod but the string is
+  crafting:
+    #Needs server restart to take effect.
+    enabled: true
+
+

@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Notify {
 
@@ -19,7 +20,7 @@ public class Notify {
         this.file = new File(GrapplingHook.getInstance().getDataFolder(), "messages.yml");
         if(!file.exists()) {
             try {
-                file.createNewFile();
+                boolean ignored = file.createNewFile();
             } catch (IOException e) {
                 Bukkit.getLogger().severe("Could not generate 'messages.yml'. - Disabling plugin: " + e.getMessage());
                 Bukkit.getServer().getPluginManager().disablePlugin(GrapplingHook.getInstance());
@@ -32,9 +33,9 @@ public class Notify {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    private final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
-
+    @SuppressWarnings("all")
     public String color(String text) {
+        String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
         String[] texts = text.split(String.format(WITH_DELIMITER, "&"));
 
         StringBuilder finalText = new StringBuilder();
@@ -64,6 +65,7 @@ public class Notify {
         get().addDefault("missing_player", "&#EBC7FFCan't find &#BE8CFF%this%&#EBC7FF online.");
         get().addDefault("full_inventory", "&#BE8CFF%this%&#EBC7FF inventory is full");
         get().addDefault("cooldown_less", "less than 1 second");
+        get().addDefault("config_updated", "&aYou have updated config.yml.");
 
         get().addDefault("stats_uses", "&#EBC7FF&l&oUses: &#BE8CFF&o&l%this%&#EBC7FF&l&o left.");
 
@@ -87,11 +89,11 @@ public class Notify {
     }
 
     public String chatMessage(final String path) {
-        return color(get().getString("plugin_prefix")) + color("&r ") + color(get().getString(path));
+        return color(Objects.requireNonNull(get().getString("plugin_prefix"))) + color("&r ") + color(Objects.requireNonNull(get().getString(path)));
     }
 
     public String message(final String path) {
-        return color(get().getString(path));
+        return color(Objects.requireNonNull(get().getString(path)));
     }
 
 }

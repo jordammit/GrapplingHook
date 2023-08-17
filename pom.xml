@@ -6,7 +6,7 @@
 
     <groupId>me.albus</groupId>
     <artifactId>GrapplingHook</artifactId>
-    <version>3.2</version>
+    <version>3.5</version>
     <packaging>jar</packaging>
 
     <name>GrapplingHook</name>
@@ -52,7 +52,7 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <!-- Replace this with your package! -->
-                            <shadedPattern>me.albus</shadedPattern>
+                            <shadedPattern>me.albus.grapplinghook</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

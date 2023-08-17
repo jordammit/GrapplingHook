@@ -3,7 +3,7 @@ package me.albus.grapplinghook.Commands;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-
+@SuppressWarnings("all")
 public abstract class SubCommand {
     public abstract String getName();
 

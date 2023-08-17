@@ -20,10 +20,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FishEvent implements Listener {
-
-    private YamlConfiguration config;
 
     @EventHandler
     public void onFish(PlayerFishEvent event) {
@@ -32,8 +31,8 @@ public class FishEvent implements Listener {
         GrapplingHook grapplingHook = GrapplingHook.getInstance();
 
         Notify notify = grapplingHook.getNotify();
-        
-        config = grapplingHook.config().get();
+
+        YamlConfiguration config = grapplingHook.config().get();
 
         CooldownManager cooldownManager = grapplingHook.getCooldownManager();
 
@@ -45,6 +44,10 @@ public class FishEvent implements Listener {
 
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
+
+        if(meta == null) {
+            return;
+        }
 
         PersistentDataContainer container = meta.getPersistentDataContainer();
         NamespacedKey key = new NamespacedKey(grapplingHook, "hook");
@@ -63,12 +66,15 @@ public class FishEvent implements Listener {
             if(config.getBoolean("Settings.messages.cooldown.enabled")) {
                 String title = config.getString("Settings.messages.cooldown.title");
                 String subtitle;
-                if(timeleft > 0) {
-                    subtitle = config.getString("Settings.messages.cooldown.subtitle").replace("%this%", String.valueOf(timeleft));
-                } else {
-                    subtitle = config.getString("Settings.messages.cooldown.subtitle").replace("%this%", notify.message("cooldown_less"));
+                if(title != null && !title.isEmpty()) {
+                    if (timeleft > 0) {
+                        subtitle = Objects.requireNonNull(config.getString("Settings.messages.cooldown.subtitle")).replace("%this%", String.valueOf(timeleft));
+                    } else
+                        subtitle = Objects.requireNonNull(config.getString("Settings.messages.cooldown.subtitle")).replace("%this%", notify.message("cooldown_less"));
+                    if (!subtitle.isEmpty()) {
+                        player.sendTitle(notify.color(title), notify.color(subtitle), 15, 50, 15);
+                    }
                 }
-                player.sendTitle(notify.color(title), notify.color(subtitle), 15, 50, 15);
             }
             event.setCancelled(true);
             return;
@@ -116,15 +122,15 @@ public class FishEvent implements Listener {
                 player.playSound(player.getLocation(), Sound.valueOf(config.getString("Settings.sound.name")), 1, 1);
             }
 
-            if (config.getBoolean("Settings.messages.title.enabled")) {
-                player.sendTitle("", notify.color(config.getString("Settings.messages.title.message")), 15, 50, 15);
-            }
+            if (config.getBoolean("Settings.messages.title.enabled"))
+                player.sendTitle("", notify.color(Objects.requireNonNull(config.getString("Settings.messages.title.message"))), 15, 50, 15);
 
             if (config.getBoolean("Settings.messages.actionbar.enabled")) {
                 String actionbar = config.getString("Settings.messages.actionbar.message");
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(notify.color(actionbar)));
+                if (actionbar != null) {
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(notify.color(actionbar)));
+                }
             }
         }
     }
-
 }

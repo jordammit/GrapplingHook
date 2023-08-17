@@ -3,16 +3,17 @@ package me.albus.grapplinghook.Commands;
 import me.albus.grapplinghook.Commands.list.give;
 import me.albus.grapplinghook.Commands.list.reload;
 import me.albus.grapplinghook.Commands.list.set;
+import me.albus.grapplinghook.GUI.Menus.SettingsMenu;
 import me.albus.grapplinghook.GrapplingHook;
 import me.albus.grapplinghook.Utils.Config;
 import me.albus.grapplinghook.Utils.Notify;
+import me.albus.grapplinghook.Utils.Settings.SettingsHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,6 +30,7 @@ public class CommandManager implements TabExecutor {
         subcommands.add(new give());
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         GrapplingHook grapplingHook = GrapplingHook.getInstance();
@@ -47,13 +49,14 @@ public class CommandManager implements TabExecutor {
                     }
                 }
             } else {
-                if(player.hasPermission("gh.admin") || player.isOp()) {
-                    player.sendMessage(notify.color("&c~ &e&lGrappling Hook Plugin &c~"));
-                    player.sendMessage(notify.color("&e/grapplinghook give &d<player>"));
-                    player.sendMessage(notify.color("&e/grapplinghook set &d<velocity>&e | &d<cooldown> <number>"));
-                    player.sendMessage(notify.color("&e/grapplinghook reload"));
+                if(player.hasPermission("gh.admin")) {
+                    new SettingsMenu(GrapplingHook.menuUtilities(player)).open();
+                    SettingsHandler settingsHandler = GrapplingHook.getInstance().getSettingsHandler();
+                    if(!settingsHandler.initialized(player)) {
+                        settingsHandler.initialize(player);
+                    }
                 } else {
-                    sender.sendMessage(notify.chatMessage("permission"));
+                    player.sendMessage(notify.chatMessage("permission"));
                 }
             }
         }
@@ -79,7 +82,7 @@ public class CommandManager implements TabExecutor {
                         uses = config.get().getInt("Settings.uses.amount");
                     } else if(args.length == 3) {
                         if(grapplingHook.isInteger(args[2])) {
-                            uses = Integer.valueOf(args[2]);
+                            uses = Integer.parseInt(args[2]);
                         } else if(args[2].equalsIgnoreCase("random")) {
                             uses = grapplingHook.getRandom();
                         } else {
@@ -93,11 +96,13 @@ public class CommandManager implements TabExecutor {
 
                     if(uses > 0 && config.get().getBoolean("Settings.uses.enabled")) {
                         NamespacedKey counter = new NamespacedKey(GrapplingHook.getInstance(), "uses");
-                        meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
-                        ArrayList<String> lore = new ArrayList<>();
-                        lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
-                        meta.setLore(lore);
-                        item.setItemMeta(meta);
+                        if(meta != null) {
+                            meta.getPersistentDataContainer().set(counter, PersistentDataType.INTEGER, uses);
+                            ArrayList<String> lore = new ArrayList<>();
+                            lore.add(notify.message("stats_uses").replace("%this%", String.valueOf(uses)));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
+                        }
                     }
 
                     boolean isInventoryFull = target.getInventory().firstEmpty() == -1;
@@ -114,19 +119,17 @@ public class CommandManager implements TabExecutor {
             } else {
                 sender.sendMessage(notify.color("Grappling Hook"));
                 sender.sendMessage("/grapplinghook give <player>");
-                sender.sendMessage("/grapplinghook set <velocity | cooldown> <number> || can't do as console");
                 sender.sendMessage("/grapplinghook reload");
                 return true;
             }
         }
-
-
         return true;
     }
 
     public ArrayList<SubCommand> getSubcommands(){
         return subcommands;
     }
+    @SuppressWarnings("NullableProblems")
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
