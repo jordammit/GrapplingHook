@@ -1,6 +1,5 @@
 Settings:
   #If you would like to give the players the hook on join, set this to true.
-  #If set to true, you need to restart the server, because the event is not registered unless set to true.
   #If they already have the item nothing will happen
   give_on_join: false
 
@@ -39,7 +38,7 @@ Settings:
     amount: 60
 
     #Select the minimum and maximum random number.
-    #if you do /gh give <player> random instead of a number you will give them a random number between the min and max value.
+    #if you do '/gh give <player> random' instead of a number you will give them a random number between the min and max value.
     random:
       min: 3
       max: 67
@@ -51,8 +50,8 @@ Settings:
       enabled: true
 
   #Allow players to craft the grappling hook. It's the same as a fishing rod but the string is
+  #Needs server restart to take effect.
   crafting:
-    #Needs server restart to take effect.
     enabled: true
 
 

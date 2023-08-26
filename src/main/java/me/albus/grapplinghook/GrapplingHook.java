@@ -60,9 +60,7 @@ public final class GrapplingHook extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new FishEvent(), this);
 
-        if(config.get().getBoolean("Settings.give_on_join")) {
-            getServer().getPluginManager().registerEvents(new JoinEvent(), this);
-        }
+        getServer().getPluginManager().registerEvents(new JoinEvent(), this);
 
         if(config.get().getBoolean("Settings.crafting.enabled")) {
             loadRecipe();

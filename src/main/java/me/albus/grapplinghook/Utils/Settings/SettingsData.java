@@ -6,9 +6,19 @@ public class SettingsData {
 
     private boolean toggleBreakSound;
 
+    private boolean giveOnJoin;
+
     private int velocity;
 
     private int cooldown;
+
+    public boolean getToggleGiveOnJoin() {
+        return giveOnJoin;
+    }
+
+    public void setToggleGiveOnJoin(boolean value) {
+        giveOnJoin = value;
+    }
 
     public void setToggleSound(boolean b) {
         this.toggleSound = b;

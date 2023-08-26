@@ -3,6 +3,7 @@ package me.albus.grapplinghook.Listener;
 import me.albus.grapplinghook.GrapplingHook;
 import me.albus.grapplinghook.Utils.Notify;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,8 +13,12 @@ import org.bukkit.inventory.ItemStack;
 public class JoinEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+        YamlConfiguration config = GrapplingHook.getInstance().config().get();
+        if(!config.getBoolean("Settings.give_on_join")) {
+            return;
+        }
 
+        Player player = event.getPlayer();
         if (!player.hasPermission("gh.player") && !player.hasPermission("gh.admin") && !player.isOp()) {
             return;
         }

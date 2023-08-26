@@ -61,6 +61,16 @@ public class SettingsHandler {
         return initialized(player) ? settingsMap.get(player).getVelocity() : 0;
     }
 
+    public boolean getGiveOnJoin(Player player) {
+        return initialized(player) ? settingsMap.get(player).getToggleGiveOnJoin() : false;
+    }
+
+    public void updateGiveOnJoin(Player player, boolean value) {
+        if(initialized(player)) {
+            settingsMap.get(player).setToggleGiveOnJoin(value);
+        }
+    }
+
     public void purge(Player player) {
         settingsMap.remove(player);
     }

@@ -33,7 +33,11 @@ public class SettingsMenu extends Menu {
 
     private boolean useSound;
 
+    private boolean giveOnJoin;
+
     private Config config;
+
+    private Player player;
 
     public SettingsMenu(MenuUtilities menuUtilities) {
         super(menuUtilities);
@@ -49,19 +53,19 @@ public class SettingsMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return notify.color("&#BE8CFFGrappling Hook &#EBC7FFSettings");
+        return notify.color("&#BE8CFFGrappling Hook &8Settings");
     }
 
     @Override
     public int getSlots() {
-        return 9;
+        return 36;
     }
 
     @Override
     public void handleMenu(InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
 
-        Player player = (Player) event.getWhoClicked();
+        player = (Player) event.getWhoClicked();
 
         if (item == null || item.getType() == Material.AIR || !item.hasItemMeta()) {
             return;
@@ -116,6 +120,16 @@ public class SettingsMenu extends Menu {
             settingsHandler.updateToggleSound(player, useSound);
             player.sendMessage(notify.chatMessage("set").replace("%this%", "Use Sound").replace("%that%", String.valueOf(useSound)));
             super.open();
+        } else if(click.equalsIgnoreCase("give_on_join")) {
+            giveOnJoin = settingsHandler.getGiveOnJoin(player);
+            if(giveOnJoin == false) {
+                giveOnJoin = true;
+            } else {
+                giveOnJoin = false;
+            }
+            settingsHandler.updateGiveOnJoin(player, giveOnJoin);
+            player.sendMessage(notify.chatMessage("set").replace("%this%", "Give On Join").replace("%that%", String.valueOf(giveOnJoin)));
+            super.open();
         } else if(click.equalsIgnoreCase("save")) {
             
             velocity = settingsHandler.getVelocity(player);
@@ -123,12 +137,15 @@ public class SettingsMenu extends Menu {
             
             breakSound = settingsHandler.getToggleBreakSound(player);
             useSound = settingsHandler.getToggleSound(player);
+            giveOnJoin = settingsHandler.getGiveOnJoin(player);
 
             configuration.set("Settings.velocity", velocity);
             configuration.set("Settings.cooldown", cooldown);
 
             configuration.set("Settings.uses.sound.enabled", breakSound);
             configuration.set("Settings.sound.enabled", useSound);
+            configuration.set("Settings.give_on_join", giveOnJoin);
+
             config.save();
             config.reload();
             player.closeInventory();
@@ -140,16 +157,41 @@ public class SettingsMenu extends Menu {
 
     @Override
     public void setMenuItems() {
-        Player player = menuUtilities.getOwner();
+        player = menuUtilities.getOwner();
 
-        inventory.setItem(0, setVelocityItem(player));
-        inventory.setItem(1, setCooldownItem(player));
-        inventory.setItem(2, toggleUseSound(player));
-        inventory.setItem(3, toggleSoundBreak(player));
-        inventory.setItem(8, saveButton());
+        inventory.setItem(0, filler());
+        inventory.setItem(1, filler());
+        inventory.setItem(2, filler());
+        inventory.setItem(3, filler());
+        inventory.setItem(4, filler());
+        inventory.setItem(5, filler());
+        inventory.setItem(6, filler());
+        inventory.setItem(7, filler());
+        inventory.setItem(8, filler());
+        inventory.setItem(9, filler());
+        inventory.setItem(17, filler());
+        inventory.setItem(18, filler());
+        inventory.setItem(26, filler());
+        inventory.setItem(27, filler());
+        inventory.setItem(28, filler());
+        inventory.setItem(29, filler());
+        inventory.setItem(30, filler());
+        inventory.setItem(31, saveButton());
+        inventory.setItem(32, filler());
+        inventory.setItem(33, filler());
+        inventory.setItem(34, filler());
+        inventory.setItem(35, filler());
+
+
+
+        inventory.setItem(10, setVelocityItem());
+        inventory.setItem(11, setCooldownItem());
+        inventory.setItem(12, toggleUseSound());
+        inventory.setItem(13, toggleSoundBreak());
+        inventory.setItem(14, giveOnJoinButton());
     }
 
-    private ItemStack setVelocityItem(Player player) {
+    private ItemStack setVelocityItem() {
         int cc = settingsHandler.getVelocity(player);
 
         if(cc == 0) {
@@ -168,7 +210,7 @@ public class SettingsMenu extends Menu {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "velocity");
-        meta.setDisplayName(notify.color("&eCurrent Velocity is &b" + this.velocity));
+        meta.setDisplayName(notify.color("&eVelocity: &b" + this.velocity));
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add(notify.color("&8--------------------"));
@@ -182,7 +224,7 @@ public class SettingsMenu extends Menu {
         return item;
     }
 
-    private ItemStack setCooldownItem(Player player) {
+    private ItemStack setCooldownItem() {
         int cc = settingsHandler.getCooldown(player);
 
         if(cc == 0) {
@@ -201,7 +243,7 @@ public class SettingsMenu extends Menu {
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "cooldown");
-        meta.setDisplayName(notify.color("&eCurrent Cooldown is &b" + this.cooldown));
+        meta.setDisplayName(notify.color("&eCooldown: &b" + this.cooldown));
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add(notify.color("&8--------------------"));
@@ -215,28 +257,24 @@ public class SettingsMenu extends Menu {
         return item;
     }
 
-    private ItemStack toggleSoundBreak(Player player) {
+    private ItemStack toggleSoundBreak() {
         boolean cc = settingsHandler.getToggleBreakSound(player);
         breakSound = configuration.getBoolean("Settings.uses.sound.enabled");
-        String value = "false";
+
+        Material material = Material.GREEN_STAINED_GLASS_PANE;
         if(cc == false) {
-            if(breakSound == true) {
-                breakSound = true;
-                value = "true";
-            }
-        } else {
-            breakSound = true;
-            value = "true";
+            material = Material.RED_STAINED_GLASS_PANE;
         }
-        ItemStack item = new ItemStack(Material.MUSIC_DISC_5);
+        ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "break_sound");
-        meta.setDisplayName(notify.color("&eCurrent Break Sound is &b" + value));
+        meta.setDisplayName(notify.color("&eBreak Sound: &b" + cc));
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add(notify.color("&8--------------------"));
-        lore.add(notify.color("&bToggle break sound."));
+        lore.add(notify.color("&bToggle sound when grappling hook breaks."));
+        lore.add(notify.color("&bCurrent config value:&6 " + breakSound));
         lore.add(notify.color("&8--------------------"));
         lore.add(" ");
         meta.setLore(lore);
@@ -244,29 +282,49 @@ public class SettingsMenu extends Menu {
         return item;
     }
 
-    private ItemStack toggleUseSound(Player player) {
+    private ItemStack toggleUseSound() {
         boolean cc = settingsHandler.getToggleSound(player);
         useSound = configuration.getBoolean("Settings.sound.enabled");
-        String value = "false";
+        Material material = Material.GREEN_STAINED_GLASS_PANE;
         if(cc == false) {
-            if(useSound == true) {
-                useSound = true;
-                value = "true";
-            }
-        } else {
-            useSound = true;
-            value = "true";
+            material = Material.RED_STAINED_GLASS_PANE;
         }
-
-        ItemStack item = new ItemStack(Material.MUSIC_DISC_13);
+        ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "use_sound");
-        meta.setDisplayName(notify.color("&eCurrent Use Sound is &b" + value));
+        meta.setDisplayName(notify.color("&eSound: &b" + cc));
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add(notify.color("&8--------------------"));
-        lore.add(notify.color("&bToggle use sound."));
+        lore.add(notify.color("&bToggle sound when using grappling hook."));
+        lore.add(notify.color("&bCurrent config value:&6 " + useSound));
+        lore.add(notify.color("&8--------------------"));
+        lore.add(" ");
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack giveOnJoinButton() {
+        boolean cc = settingsHandler.getGiveOnJoin(player);
+        giveOnJoin = configuration.getBoolean("Settings.give_on_join");
+
+        Material material = Material.GREEN_STAINED_GLASS_PANE;
+        if(cc == false) {
+            material = Material.RED_STAINED_GLASS_PANE;
+        }
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "give_on_join");
+        meta.setDisplayName(notify.color("&eJoin: &b" + cc));
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(" ");
+        lore.add(notify.color("&8--------------------"));
+        lore.add(notify.color("&bToggle if you want to give players"));
+        lore.add(notify.color("&bthe grappling hook when they join."));
+        lore.add(notify.color("&bCurrent config value:&6 " + giveOnJoin));
         lore.add(notify.color("&8--------------------"));
         lore.add(" ");
         meta.setLore(lore);
@@ -275,7 +333,7 @@ public class SettingsMenu extends Menu {
     }
 
     private ItemStack saveButton() {
-        ItemStack item = new ItemStack(Material.ANVIL);
+        ItemStack item = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(GrapplingHook.getInstance(), "CLICK"), PersistentDataType.STRING, "save");
@@ -283,11 +341,22 @@ public class SettingsMenu extends Menu {
         ArrayList<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add(notify.color("&8--------------------"));
-        lore.add(notify.color("&bThis will save and reload the config"));
-        lore.add(notify.color("&7With the updated values."));
+        lore.add(notify.color("&bThis will save and reload"));
+        lore.add(notify.color("&bthe config with"));
+        lore.add(notify.color("&bthe updated values."));
+        lore.add(" ");
         lore.add(notify.color("&8--------------------"));
         lore.add(" ");
         meta.setLore(lore);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack filler() {
+        ItemStack item = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(" ");
+        meta.removeItemFlags();
         item.setItemMeta(meta);
         return item;
     }
