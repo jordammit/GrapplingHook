@@ -105,7 +105,10 @@ public final class GrapplingHook extends JavaPlugin {
         NamespacedKey key = new NamespacedKey(getInstance(), "hook");
         if(meta != null) {
             meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "hook");
-            meta.setDisplayName(notify.message("plugin_prefix"));
+            meta.setDisplayName(config.get().getString("Settings.itemname"));
+            if(config.get().getBoolean("Settings.cmd.enabled")) {
+            	meta.setCustomModelData(this.config.get().getInt("Settings.cmd.id"));
+            }
             item.setItemMeta(meta);
         }
         return item;

@@ -3,6 +3,9 @@ Settings:
   #If they already have the item nothing will happen
   give_on_join: false
 
+  #Set the name for the Grappling Hook
+  itemname: "Grappling Hook"
+  
   #Set the velocity aka the amount of leap players get when using the grappling hook.
   velocity: 1.0
   #Set the cooldown in seconds between each use.
@@ -21,7 +24,7 @@ Settings:
       #Action bar do not support hex colors, so please limit the colors here to bukkit colors.
       message: '&d&l&oWhoosh!'
     title:
-      enabled: true
+      enabled: false
       message: "&#EBC7FFWhoosh!"
     cooldown:
       enabled: true
@@ -53,5 +56,10 @@ Settings:
   #Needs server restart to take effect.
   crafting:
     enabled: true
+
+  #Change to a custom model id for fishing rod
+  cmd:
+    enabled: false
+    id: 4
 
 
